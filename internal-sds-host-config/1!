@@ -1,6 +1,6 @@
 ---
 - name: Configure Crux dev/test host
-  hosts:  "{{ node_name }}"
+  hosts:  {{ node_name }}
   become: true
   tasks:
   - name: Include the sds-host-config role

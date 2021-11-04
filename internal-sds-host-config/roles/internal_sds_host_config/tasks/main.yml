@@ -1,13 +1,15 @@
 ## Import task for sds host config
 
-name: Execute Firewall task
-import_tasks: execute_firewall_script.yml
+- name: Execute Firewall task
+  import_tasks: execute_firewall_script.yml
 
-name: Install required packages
-import_tasks: install_packages.yml
+- name: Install required packages
+  import_tasks: install_packages.yml
 
-name: Configure network 
-import_tasks: configure_network.yml
+- name: Configure network 
+  import_tasks: configure_network.yml
 
-name: Reboot host after network changes
-import_tasks: configure_network.yml
+- pause: 
+
+- name: Reboot host after network changes
+  import_tasks: reboot_and_update_host.yml
