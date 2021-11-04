@@ -1,0 +1,6 @@
+---
+# Whether to attempt downloading the RPM directly from the NetApp SF Artifactory server
+from_artifactory: "{{ from_artifactory | default(True) }}"
+sf_auto_install_rpm: True
+sf_rpm_from_artifactory: True
+sf_configure_test_cluster: True

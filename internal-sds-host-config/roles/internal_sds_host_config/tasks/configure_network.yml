@@ -1,0 +1,46 @@
+## Configure network
+     
+- name: Configure route tables
+  template:
+    src: rt_tables-template.j2
+    dest: /etc/iproute2/rt_tables
+
+- name: Configure MIPI
+  template:
+    src: ifcfg-mipi-template.j2
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ hostvars[inventory_hostname].MIPI }}"
+
+- name: Configure MIPI-slave0
+  template:
+    src: ifcfg-mipislave0-template.j2
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ hostvars[inventory_hostname].MIPI_SLAVE0 }}"
+
+- name: Configure MIPI-slave1
+  template:
+    src: ifcfg-mipislave1-template.j2
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ hostvars[inventory_hostname].MIPI_SLAVE1 }}"
+    
+- name: Configure SIPI
+  template:
+    src: ifcfg-sipi-template.j2
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ hostvars[inventory_hostname].SIPI }}"
+
+- name: Configure SIPI-slave0
+  template:
+    src: ifcfg-sipislave0-template.j2
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ hostvars[inventory_hostname].SIPI_SLAVE0 }}"
+
+- name: Configure SIPI-slave1
+  template:
+    src: ifcfg-sipislave1-template.j2
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ hostvars[inventory_hostname].SIPI_SLAVE1 }}"
+
+- name: Configure SIPI routes
+  template:
+    src: route-sipi-template.j2
+    dest: "/etc/sysconfig/network-scripts/route-{{ hostvars[inventory_hostname].SIPI }}"
+
+- name: Configure SIPI rules
+  template:
+    src: rule-sipi-template.j2
+    dest: "/etc/sysconfig/network-scripts/rule-{{ hostvars[inventory_hostname].SIPI }}"

@@ -1,0 +1,81 @@
+---
+ansible:
+  roles_path: $PWD/molecule/cluster/roles/
+  host_key_checking: False
+
+dependency:
+  name: galaxy
+  options:
+    ignore-certs: True
+    ignore-errors: True
+    role-file: requirements.yml
+    requirements-file: requirements.yml
+    roles-path: $PWD/roles
+
+driver:
+  name: delegated
+  # Save the log files we need to preserve
+  # (from the 'destroy' tasks)
+  safe_files:
+    - /var/tmp/sf-test-logs-*.tar.gz
+  options:
+#    followScenarioStrict: True
+    managed: True
+    ansible_connection_options:
+      connection: ssh
+      # Allow password based SSH connections (ugh!)
+      ansible_ssh_common_args: '-o PreferredAuthentications=gssapi-with-mic,gssapi-keyex,hostbased,publickey,password \
+      -o PasswordAuthentication=yes'
+#      -F /tmp/molecule/molecule_delegated/default/ssh_config'
+lint: |
+  set -e ; \
+  yamllint -f colored tasks/* && \
+  yamllint -f colored meta/* && \
+  yamllint -f colored handlers/* && \
+  yamllint -f colored defaults/* && \
+  yamllint -f colored vars/* && \
+  ansible-lint meta/*.yml && \
+  ansible-lint handlers/*.yml && \
+  ansible-lint vars/*.yml && \
+  ansible-lint defaults/*.yml && \
+  ansible-lint tasks/* && \
+  flake8 filter_plugins/*.py && \
+  flake8 molecule/*/tests/*.py && \
+  flake8 tests/*.py
+provisioner:
+  name: ansible
+  options:
+    v: True
+  config_options:
+    defaults:
+      local_tmp: /tmp/.ansible-$USER/tmp
+      remote_tmp: /tmp/.ansible-$USER/tmp
+
+platforms:
+  - name: CentOS-7
+    groups:
+      - centos
+    registry:
+      url: ${DOCKER_REGISTRY}
+    image: pycontribs/centos:7
+    command: init
+    pre_build_image: True
+    privileged: True
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    security_opts:
+      - seccomp=unconfined
+verifier:
+  name: ansible
+scenario:
+  name: default
+  lint_sequence:
+    - lint
+  create_sequence: []
+  prepare_sequence: []
+  check_sequence:
+    - lint
+  converge_sequence: []
+  destroy_sequence: []
+  test_sequence:
+    - lint

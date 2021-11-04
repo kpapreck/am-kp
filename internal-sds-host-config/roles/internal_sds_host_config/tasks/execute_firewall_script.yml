@@ -1,0 +1,4 @@
+# This task will set the linux firewall
+
+- name: Copy and Execute the firewall script
+  script: firewallscript.sh

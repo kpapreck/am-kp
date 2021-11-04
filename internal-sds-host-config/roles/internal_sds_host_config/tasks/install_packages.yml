@@ -1,0 +1,17 @@
+## For Redhat 7
+- name: Install packages CentOS or RHEL 7.6 through 7.8
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and (ansible_distribution_version >= "7.6" and ansible_distribution_version < "8.0")
+  yum:
+    name:
+      - NetworkManager-dispatcher-routing-rules
+      - podman-docker
+    state: latest
+
+## For Redhat 8
+- name: Install packages in 8.0 or greater
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and ansible_distribution_version >= "8.0"
+  dnf:
+    name:
+      - NetworkManager-dispatcher-routing-rules
+      - podman-docker
+    state: latest

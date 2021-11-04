@@ -1,0 +1,21 @@
+TEAM_CONFIG="{\"runner\": {\"name\": \"activebackup\"}, \"link_watch\": {\"name\": \"ethtool\"}}"
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=none
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=no
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME={{ hostvars[inventory_hostname].MIPI }}
+DEVICE={{ hostvars[inventory_hostname].MIPI }}
+ONBOOT=yes
+DEVICETYPE=Team
+IPADDR={{ hostvars[inventory_hostname].vars.MIP }}
+PREFIX={{ hostvars[inventory_hostname].MIP_CIDR }}
+GATEWAY={{ hostvars[inventory_hostname].MIP_GATEWAY }}
+DNS1={{ hostvars[inventory_hostname].DNS }}
+NM_CONTROLLED=yes
+

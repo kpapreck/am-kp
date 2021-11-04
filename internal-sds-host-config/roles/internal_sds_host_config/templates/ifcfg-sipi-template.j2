@@ -1,0 +1,16 @@
+#TEAM_CONFIG="{\"runner\": {\"name\": \"activebackup\"}, \"link_watch\": {\"name\": \"ethtool\"}}"
+TEAM_CONFIG="{\"runner\": {\"name\": \"lacp\", \"fast_rate\": true }, \"link_watch\": {\"name\": \"ethtool\"}}"
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=none
+DEFROUTE=no
+IPV4_FAILURE_FATAL=no
+IPV6INIT=no
+NAME={{ hostvars[inventory_hostname].SIPI }}
+DEVICE={{ hostvars[inventory_hostname].SIPI }}
+ONBOOT=yes
+DEVICETYPE=Team
+IPADDR={{ hostvars[inventory_hostname].vars.SIP }}
+PREFIX={{ hostvars[inventory_hostname].SIP_CIDR }}
+NM_CONTROLLED=yes
+MTU=9000

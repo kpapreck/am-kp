@@ -1,0 +1,3 @@
+{{ hostvars[inventory_hostname].SIP_NETWORK }}/{{ hostvars[inventory_hostname].SIP_CIDR }} dev {{ hostvars[inventory_hostname].SIPI }} src {{ hostvars[inventory_hostname].vars.SIP }} table {{ hostvars[inventory_hostname].SIPI }}
+default via {{ hostvars[inventory_hostname].SIP_GATEWAY }} dev {{ hostvars[inventory_hostname].SIPI }} src {{ hostvars[inventory_hostname].vars.SIP }} table {{ hostvars[inventory_hostname].SIPI }}
+

@@ -1,0 +1,49 @@
+all:
+  hosts:
+    10.10.170.133:
+      vars:
+        HOSTNAME: esds1
+        MIP: 10.10.170.133
+        SIP: 10.10.171.33
+    10.10.170.134:
+      vars:
+        HOSTNAME: esds2
+        MIP: 10.10.170.134
+        SIP: 10.10.171.34
+    10.10.170.135:
+      vars:
+        HOSTNAME: esds3
+        MIP: 10.10.170.135
+        SIP: 10.10.171.35
+
+  children:
+    cipa_pool:
+      hosts:
+        10.10.170.133:
+        10.10.170.134:
+        10.10.170.135:
+      vars:
+        MIP_NETWORK: 10.10.170.128
+        MIP_NETMASK: 255.255.255.128
+        MIP_CIDR: 25
+        MIP_GATEWAY: 10.10.170.129
+        DNS: 10.10.0.250
+        SIP_NETWORK: 10.10.171.0
+        SIP_NETMASK: 255.255.255.128
+        SIP_CIDR: 25
+        SIP_GATEWAY: 10.10.171.1
+
+  # Platform types - add each host to one of these children to pick up the
+  # correct platform configuration (or add a new child for a new platform)
+    DL360:
+      hosts:
+        10.10.170.133:
+        10.10.170.134:
+        10.10.170.135:
+      vars:
+        MIPI: team1G
+        MIPI_SLAVE0: eno5
+        MIPI_SLAVE1: eno6
+        SIPI: team10G
+        SIPI_SLAVE0: ens2f0
+        SIPI_SLAVE1: ens2f1
