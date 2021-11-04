@@ -1,25 +1,25 @@
 all:
   hosts:
     10.193.172.40:
-      vars:
-        HOSTNAME: SFPM-vNODE-9
+            #vars:
+        HOSTNAME: eSDS-vNode9
         MIP: 10.193.172.40
         SIP: 10.193.171.142
     10.193.172.41:
-      vars:
-        HOSTNAME: SFPM-vNODE-10
+            #vars:
+        HOSTNAME: eSDS-vNode10
         MIP: 10.193.172.41
         SIP: 10.193.171.143
     10.193.172.42:
-      vars:
-        HOSTNAME: SFPM-vNODE-11
+            #vars:
+        HOSTNAME: eSDS-vNode11
         MIP: 10.193.172.42
         SIP: 10.193.171.144
     10.193.172.43:
-      vars:
-        HOSTNAME: SFPM-vNODE-11
+            #vars:
+        HOSTNAME: eSDS-vNode12
         MIP: 10.193.172.43
-        SIP: 10.193.171.143
+        SIP: 10.193.171.145
 
 
   children:
@@ -82,6 +82,17 @@ all:
         SIPI: team10G
         SIPI_SLAVE0: ens161
         SIPI_SLAVE1: ens256
+        storage_devices:
+        - /dev/sdb
+        - /dev/sdc
+        - /dev/sdd
+        - /dev/sde
+        - /dev/sdf
+        - /dev/sdg
+        - /dev/sdh
+        cache_devices:
+        - /dev/sdi
+
 
 
   # Globally set variable to avoid issues w/RHEL 8 and python
@@ -90,4 +101,27 @@ all:
     MANAGEMENT_MTU: 1500
     STORAGE_MTU: 9000
     ansible_password: NetApp!23
+
+# Unistall Cluster variables
+    sf_allow_uninstall_active_cluster: True
+# Upgrade Cluster Variables
+    sf_mgmt_virt_ip: "{{ MVIP }}"
+    sf_allow_cluster_subset_upgrade: True
+# eSDS Installation variables
+    mgmt_iface: "team1G"
+    storage_iface: "team10G"
+    solidfire_element_rpm: http://10.193.172.9/iso/eSDS/solidfire-element-12.2.0.777-1.el7.x86_64.rpm
+      #      solidfire_element_rpm: http://10.193.172.9/iso/eSDS/solidfire-element-12.3.0.958-1.el7.x86_64.rpm
+#      solidfire_element_rpm: http://10.193.172.9/iso/eSDS/solidfire-element-12.5.0.467-1.el7.x86_64.rpm
+#solidfire_element_rpm_path: "{{ solidfire_element_rpm }}"
+    # Cluster Configuration variables
+    MVIP: 10.193.172.44
+    SVIP: 10.193.171.146
+    sf_cluster_name: vNode-eSDS-am
+    sf_serialnumber: "abc456789"
+    sf_ordernumber: "abc456789"
+    sf_cluster_admin_username: admin
+    sf_cluster_admin_passwd: NetApp!23
+    sf_validate_certs: False
+    enableSoftwareEncryptionAtRest: True
 

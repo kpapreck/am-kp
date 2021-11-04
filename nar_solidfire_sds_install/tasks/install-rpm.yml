@@ -1,0 +1,17 @@
+---
+- name: Ensure the NetApp eSDS package is installed on the host
+  when: solidfire_element_rpm_path is defined
+  yum:
+    name: "{{ solidfire_element_rpm_path }}"
+    validate_certs: "{{ na_sf_validate_certs }}"
+    disable_gpg_check: True
+    state: present
+    skip_broken: False
+  register: rpm_output
+  failed_when: >
+    solidfire_element_rpm_path is undefined or
+    (rpm_output is defined and
+      (rpm_output.rc is defined and
+        rpm_output.rc|int != 0) or
+      (rpm_output.rc is undefined))
+  become: True

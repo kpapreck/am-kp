@@ -5,6 +5,9 @@
     name:
       - NetworkManager-dispatcher-routing-rules
       - podman-docker
+      - python3
+      - python-pip
+      - python-setuptools
     state: latest
 
 ## For Redhat 8
@@ -14,4 +17,7 @@
     name:
       - NetworkManager-dispatcher-routing-rules
       - podman-docker
+      - platform-python
+      - platform-python-pip
+      - platform-python-setuptools
     state: latest

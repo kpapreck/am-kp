@@ -1,5 +1,5 @@
 ---
-- name: Configure Crux dev/test host
+- name: Configure eSDS host
   hosts:  "{{ node_name }}"
   become: true
   tasks:
