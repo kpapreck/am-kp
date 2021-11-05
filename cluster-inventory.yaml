@@ -1,0 +1,123 @@
+all:
+  hosts:
+    10.193.172.40:
+        HOSTNAME: eSDS-vNode9
+        MIP: 10.193.172.40
+        SIP: 10.193.171.142
+      #vars used for sds_host_config_role, but need it without vars for cluster_config role
+    10.193.172.41:
+        HOSTNAME: eSDS-vNode10
+        MIP: 10.193.172.41
+        SIP: 10.193.171.143
+    10.193.172.42:
+        HOSTNAME: eSDS-vNode11
+        MIP: 10.193.172.42
+        SIP: 10.193.171.144
+    10.193.172.43:
+        HOSTNAME: eSDS-vNode12
+        MIP: 10.193.172.43
+        SIP: 10.193.171.145
+
+  children:
+    cipa_pool:
+      hosts:
+        10.193.172.40:
+        10.193.172.41:
+        10.193.172.42:
+        10.193.172.43:
+      vars:
+        MIP_NETWORK: 10.193.172.0
+        MIP_NETMASK: 255.255.255.0
+        MIP_CIDR: 24
+        MIP_GATEWAY: 10.193.172.1
+        DNS: 10.193.0.250
+        SIP_NETWORK: 10.193.171.128
+        SIP_NETMASK: 255.255.255.128
+        SIP_CIDR: 25
+        SIP_GATEWAY: 10.193.171.129
+
+  # Platform types - add each host to one of these children to pick up the
+  # correct platform configuration (or add a new child for a new platform)
+    DL360:
+      hosts:
+        #10.10.170.133:
+        #10.10.170.134:
+        #10.10.170.135:
+      vars:
+        MIPI: team1G
+        MIPI_SLAVE0: eno5
+        MIPI_SLAVE1: eno6
+        SIPI: team10G
+        SIPI_SLAVE0: ens2f0
+        SIPI_SLAVE1: ens2f1
+
+    R640:
+      hosts:
+      ## Configuration for triton servers with the enp designation
+      # You have to check your Triton node to verify before configuring.
+      vars:
+        MIPI: team0
+        MIPI_SLAVES:
+          - enp61s0f0
+          - enp61s0f1
+        SIPI: team1
+        SIPI_SLAVES:
+          - enp175s0f0
+          - enp175s0f1
+
+    vNode:
+      hosts:
+        10.193.172.40:
+        10.193.172.41:
+        10.193.172.42:
+        10.193.172.43:
+      vars:
+        MIPI: team1G
+        MIPI_SLAVE0: ens192
+        MIPI_SLAVE1: ens224
+        SIPI: team10G
+        SIPI_SLAVE0: ens161
+        SIPI_SLAVE1: ens256
+        storage_devices:
+        - /dev/sdb
+        - /dev/sdc
+        - /dev/sdd
+        - /dev/sde
+        - /dev/sdf
+        - /dev/sdg
+        - /dev/sdh
+        cache_devices:
+        - /dev/sdi
+
+
+
+  # Globally set variable to avoid issues w/RHEL 8 and python
+  vars:
+    ansible_python_interpreter: /usr/libexec/platform-python
+    MANAGEMENT_MTU: 1500
+    STORAGE_MTU: 9000
+    ansible_password: NetApp!23
+
+# Unistall Cluster variables
+    sf_allow_uninstall_active_cluster: True
+# Upgrade Cluster Variables
+    sf_mgmt_virt_ip: "{{ MVIP }}"
+    sf_allow_cluster_subset_upgrade: True
+# eSDS Installation variables
+    mgmt_iface: "team1G"
+    storage_iface: "team10G"
+    #solidfire_element_rpm: http://10.193.172.9/iso/eSDS/solidfire-element-12.2.0.777-1.el7.x86_64.rpm
+    solidfire_element_rpm: http://10.193.172.9/iso/eSDS/solidfire-element-12.3.0.958-1.el7.x86_64.rpm
+#      solidfire_element_rpm: http://10.193.172.9/iso/eSDS/solidfire-element-12.5.0.467-1.el7.x86_64.rpm
+#solidfire_element_rpm_path: "{{ solidfire_element_rpm }}"
+    # Cluster Configuration variables
+    MVIP: 10.193.172.44
+    SVIP: 10.193.171.146
+    sf_cluster_name: vNode-eSDS-am
+    sf_serialnumber: "abc456789"
+    sf_ordernumber: "abc456789"
+    sf_cluster_admin_username: admin
+    sf_cluster_admin_passwd: NetApp!23
+    sf_validate_certs: False
+    enableSoftwareEncryptionAtRest: True
+

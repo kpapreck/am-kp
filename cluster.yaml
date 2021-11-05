@@ -7,9 +7,6 @@
           #include_role:
           #name: /root/git/internal-sds-host-config/roles/internal_sds_host_config
    
-  - name: Install eSDS software 
-    include_role:
-       name: /root/git/nar_solidfire_sds_install
 
   - name: Setup eSDS cluster
     include_role:

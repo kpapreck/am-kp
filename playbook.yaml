@@ -4,6 +4,6 @@
           # - role: nar_solidfire_sds_compliance
           # - role: nar_solidfire_sds_install
           #- role: nar_solidfire_cluster_config
-    # - role: nar_solidfire_sds_upgrade
-      - role: nar_solidfire_sds_uninstall
+     - role: nar_solidfire_sds_upgrade
+    #  - role: nar_solidfire_sds_uninstall
 
