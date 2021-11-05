@@ -1,0 +1,11 @@
+{% if MIP_VLAN is undefined %}
+
+{{ MIP_NETWORK }}/{{ MIP_CIDR }} dev {{ MIPI }} src {{ MIP }} table {{ MIPI }}
+default via {{ MIP_GATEWAY }} dev {{ MIPI }} src {{ MIP }} table {{ MIPI }}
+
+{% else %}
+
+{{ MIP_NETWORK }}/{{ MIP_CIDR }} dev {{ MIPI }}.{{ MIP_VLAN }} src {{ MIP }} table {{ MIPI }}
+default via {{ MIP_GATEWAY }} dev {{ MIPI }}{{ MIP_VLAN }} src {{ MIP }} table {{ MIPI }}
+
+{% endif %}

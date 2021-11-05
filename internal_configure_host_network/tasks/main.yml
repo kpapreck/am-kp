@@ -1,0 +1,15 @@
+---
+- name: Ensure we load the pre-requisite software check
+  include_tasks: install-prerequisites.yml
+
+- name: Ensure we load the NIC redundancy config check
+  include_tasks: redundancy-variables.yml
+
+- name: Ensure we load the NIC variable check
+  include_tasks: verify-nic-variables.yml
+
+- name: Ensure we configured host NICs
+  include_tasks: oldstyle-nic-config.yml
+  when: >
+   sf_use_ancient_netcfg is undefined or
+   (sf_use_ancient_netcfg is defined and sf_use_ancient_netcfg)

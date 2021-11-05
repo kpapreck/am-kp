@@ -1,0 +1,16 @@
+NAME={{ SIPI_SLAVE0 }}
+DEVICE={{ SIPI_SLAVE0 }}
+ONBOOT=yes
+MTU={{ STORAGE_MTU }}
+
+{% if sipi_bond_method == 'Team' %}
+
+TEAM_MASTER={{ SIPI }}
+DEVICETYPE=TeamPort
+
+{% elif sipi_bond_method == 'Bond' %}
+
+SLAVE=yes
+MASTER={{ SIPI }}
+
+{% endif %}

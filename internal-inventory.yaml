@@ -1,0 +1,116 @@
+all:
+  hosts:
+    10.193.172.40:
+        HOSTNAME: SFPM-vNODE-9    # Hostname to set on the server
+        MIP: 10.193.172.40        # Management IP to set on the server
+        SIP: 10.193.171.142       # Storage IP to set on the server
+        skip_bourbon: True       # set to true to skip any bourbon configs
+        network_config_method: Default
+        NETWORK_MODE: "TEAM"
+        NODE_TYPE: "vNode"
+        #MIP_VLAN: 0
+        #SIP_VLAN: 0
+        MIPI_TAGGED: False
+        SIPI_TAGGED: False
+        SKIP_MIPI_SETUP: False
+        SKIP_SIPI_SETUP: False
+        skip_repo_setup: True
+        sipi_team_mode: activebackup
+        mipi_team_mode: activebackup
+        # Allowed m/sipi_team_mode options: activebackup, lacp, loadbalance, broadcast, roundrobin
+        sipi_bond_mode: active-backup
+        mipi_bond_mode: active-backup
+        # Allowed m/sipi_bond_modes options: balance-rr, active-backup, balance-xor, 802.3ad, balance-tlb, balance-alb
+        # 802.3ad is lacp
+        skip_network_cfg: False
+        #ansible_python_interpreter: '/usr/bin/python3'
+        # Whether to attempt downloading the RPM directly from the NetApp SF Artifactory server
+        from_artifactory: false
+
+  children:
+
+  # Network configuration - add each host to one of these children to pick up the
+  # correct network configuration (or add a new child for a new network)
+
+    sfpm_pool:
+      hosts:
+        10.193.172.40:
+        10.193.172.41:
+        10.193.172.42:
+        10.193.172.43:
+      vars:
+        MIP_NETWORK: 10.193.172.0
+        MIP_NETMASK: 255.255.255.0
+        MIP_CIDR: 24
+        MIP_GATEWAY: 10.193.172.1
+        DNS: 10.193.0.250
+        SIP_NETWORK: 10.193.171.128
+        SIP_NETMASK: 255.255.255.128
+        SIP_CIDR: 25
+        SIP_GATEWAY: 10.193.171.129
+
+  # Platform types - add each host to one of these children to pick up the
+  # correct platform configuration (or add a new child for a new platform)
+
+    DL360/380:
+      hosts:
+
+      # Configuration for all tatooine servers
+      vars:
+        MIPI: team0
+        MIPI_SLAVES:
+          - ens4f0
+          - ens4f1
+        SIPI: team1
+        SIPI_SLAVES:
+          - ens14f0
+          - ens14f1
+
+    R640:
+      hosts:
+
+      ## Configuration for triton servers with the enp designation
+      # You have to check your Triton node to verify before configuring.
+      vars:
+        MIPI: team0
+        MIPI_SLAVES:
+          - enp61s0f0
+          - enp61s0f1
+        SIPI: team1
+        SIPI_SLAVES:
+          - enp175s0f0
+          - enp175s0f1
+
+    vNode:
+      hosts:
+        10.193.172.40:
+        10.193.172.41:
+        10.193.172.42:
+        10.193.172.43:
+      vars:
+        MIPI: team1G
+        MIPI_SLAVE0: ens192
+        MIPI_SLAVE1: ens224
+        SIPI: team10G
+        SIPI_SLAVE0: ens161
+        SIPI_SLAVE1: ens256
+        storage_devices:
+        - /dev/sdb
+        - /dev/sdc
+        - /dev/sdd
+        - /dev/sde
+        - /dev/sdf
+        - /dev/sdg
+        - /dev/sdh
+        cache_devices:
+        - /dev/sdi
+
+
+
+  # Globally set variable to avoid issues w/RHEL 8 and python
+  vars:
+    ansible_password: NetApp!23
+    ansible_python_interpreter: /usr/libexec/platform-python
+    MANAGEMENT_MTU: 1500
+    STORAGE_MTU: 9000
+

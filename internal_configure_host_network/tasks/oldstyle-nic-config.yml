@@ -1,0 +1,163 @@
+---
+- name: Make sure the network is configured as we expect it to be
+  block:
+    # Enable bond and vlan support permanently
+    - name: Make sure we load the Bonding driver on reboot
+      when: >
+        mipi_bond_method == "Bond" or
+        sipi_bond_method == "Bond"
+      copy:
+        dest: /etc/modules-load.d/bonding.conf
+        mode: 0644
+        owner: root
+        group: root
+        content: |
+          bonding
+      become: True
+
+    - modprobe:
+        name: bonding
+        state: present
+      when: >
+        mipi_bond_method == "Bond" or
+        sipi_bond_method == "Bond"
+
+    - name: Make sure we load the VLANs driver on reboot
+      copy:
+        dest: /etc/modules-load.d/vlans.conf
+        mode: 0644
+        owner: root
+        group: root
+        content: |
+          8021q
+      become: True
+
+    - modprobe:
+        name: 8021q
+        state: present
+
+    - name: Make sure the route tables are correct
+      template:
+        src: templates/rt_tables-template.j2
+        dest: /etc/iproute2/rt_tables
+      notify:
+        - Reload config
+        - Restart NetworkManager
+
+    # Base interface configuration
+    - name: Make sure the MIP Configuration is set
+      block:
+        - name: Make sure MIPI is set
+          template:
+            src: templates/ifcfg-mipi-template.j2
+            dest: "/etc/sysconfig/network-scripts/ifcfg-{{ MIPI }}"
+          notify:
+            - Reload config
+            - Restart NetworkManager
+
+        - name: Make sure we configure the MIPI routes
+          template:
+            src: templates/route-mipi-template.j2
+            dest: "/etc/sysconfig/network-scripts/route-{{ MIPI }}"
+          notify:
+              - Reload config
+              - Restart NetworkManager
+
+    - name: Make sure the SIP Configuration is set
+      block:
+        - name: Make sure the SIPI is set
+          template:
+            src: templates/ifcfg-sipi-template.j2
+            dest: "/etc/sysconfig/network-scripts/ifcfg-{{ SIPI }}"
+          notify:
+            - Reload config
+            - Restart NetworkManager
+
+        - name: Make sure we configure the SIPI routes
+          template:
+            src: templates/route-sipi-template.j2
+            dest: "/etc/sysconfig/network-scripts/route-{{ SIPI }}"
+          notify:
+            - Reload config
+            - Restart NetworkManager
+
+    # VLAN tagged interface configuration
+    - name: Make sure we have VLAN tagged MIPI
+      when: MIP_VLAN is defined
+      template:
+        src: templates/ifcfg-mipi-vlan-template.j2
+        dest: "/etc/sysconfig/network-scripts/ifcfg-{{ MIPI }}.{{ MIP_VLAN }}"
+      notify:
+        - Reload config
+        - Restart NetworkManager
+
+    - name: Make sure we have VLAN tagged SIPI
+      when: SIP_VLAN is defined
+      template:
+        src: templates/ifcfg-sipi-vlan-template.j2
+        dest: "/etc/sysconfig/network-scripts/ifcfg-{{ SIPI }}.{{ SIP_VLAN }}"
+      notify:
+        - Reload config
+        - Restart NetworkManager
+
+    # Interface slave configuration
+    - name: Ensure the MIPI-slave0 is configured
+      template:
+        src: templates/ifcfg-mipislave0-template.j2
+        dest: "/etc/sysconfig/network-scripts/ifcfg-{{ MIPI_SLAVE0 }}"
+      notify:
+        - Reload config
+        - Restart NetworkManager
+
+    - name: Ensure the MIPI-slave1 is configured
+      template:
+        src: templates/ifcfg-mipislave1-template.j2
+        dest: "/etc/sysconfig/network-scripts/ifcfg-{{ MIPI_SLAVE1 }}"
+      notify:
+        - Reload config
+        - Restart NetworkManager
+
+    - name: Ensure the SIPI-slave0 is configured
+      template:
+        src: templates/ifcfg-sipislave0-template.j2
+        dest: "/etc/sysconfig/network-scripts/ifcfg-{{ SIPI_SLAVE0 }}"
+      notify:
+        - Reload config
+        - Restart NetworkManager
+
+    - name: Make sure the SIPI-slave1 is configured
+      template:
+        src: templates/ifcfg-sipislave1-template.j2
+        dest: "/etc/sysconfig/network-scripts/ifcfg-{{ SIPI_SLAVE1 }}"
+      notify:
+        - Reload config
+        - Restart NetworkManager
+
+    # Rule configuration
+    - name: Ensure we have the right MIPI rules
+      template:
+        src: templates/rule-mipi-template.j2
+        dest: "/etc/sysconfig/network-scripts/rule-{{ MIPI }}"
+      notify:
+        - Reload config
+        - Restart NetworkManager
+
+    - name: Ensure we have the right SIPI rules
+      template:
+        src: templates/rule-sipi-template.j2
+        dest: "/etc/sysconfig/network-scripts/rule-{{ SIPI }}"
+      notify:
+        - Reload config
+        - Restart NetworkManager
+
+- name: Ensure we trigger the handlers for the Network config
+  meta: flush_handlers
+
+- name: Make sure ansible has the correct host IP after the updates (MIP)
+  set_fact:
+    ansible_host: "{{ MIP }}"
+
+- name: Make sure the server is back up before we finish
+  wait_for_connection:
+    delay: 10
+    timeout: 570

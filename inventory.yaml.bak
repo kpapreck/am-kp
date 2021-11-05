@@ -1,11 +1,27 @@
 all:
   hosts:
     10.193.172.40:
-      vars:
         HOSTNAME: eSDS-vNode9
         MIP: 10.193.172.40
         SIP: 10.193.171.142
       #vars used for sds_host_config_role, but need it without vars for cluster_config role
+    10.193.172.41:
+        HOSTNAME: eSDS-vNode10
+        MIP: 10.193.172.41
+        SIP: 10.193.171.143
+    10.193.172.42:
+        HOSTNAME: eSDS-vNode11
+        MIP: 10.193.172.42
+        SIP: 10.193.171.144
+    10.193.172.43:
+        HOSTNAME: eSDS-vNode12
+        MIP: 10.193.172.43
+        SIP: 10.193.171.145
+    10.193.172.40:
+      vars:
+        HOSTNAME: eSDS-vNode9
+        MIP: 10.193.172.40
+        SIP: 10.193.171.142
     10.193.172.41:
       vars:
         HOSTNAME: eSDS-vNode10

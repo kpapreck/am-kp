@@ -1,0 +1,63 @@
+---
+- name: Ensure we default to 'Team' if SIPI redundancy model isn't defined
+  set_fact:
+    sipi_bond_method: Team
+  when: sipi_bond_method is undefined
+
+- name: Ensure we default to 'Team' if MIPI redundancy model isn't defined
+  set_fact:
+    mipi_bond_method: Team
+  when: mipi_bond_method is undefined
+
+- name: Ensure we have a mode defined if redundancy model for MIPI is Bond
+  set_fact:
+    mipi_bond_mode: 'active-backup'
+  when: mipi_bond_method == 'Bond' and mipi_bond_mode is undefined
+
+- name: Ensure we have a mode defined if redundancy model for SIPI is Bond
+  set_fact:
+    sipi_bond_mode: 'active-backup'
+  when: sipi_bond_method == 'Bond' and sipi_bond_mode is undefined
+
+- name: Ensure we have a mode defined if redundancy model for MIPI is Team
+  set_fact:
+    mipi_bond_mode: 'activebackup'
+  when: mipi_bond_method == 'Team' and mipi_team_mode is undefined
+
+- name: Ensure we have a mode defined if redundancy model for SIPI is Team
+  set_fact:
+    sipi_bond_mode: 'activebackup'
+  when: sipi_bond_method == 'Team' and sipi_team_mode is undefined
+
+- name: Exit for incorrect mode when Team is the redundancy model for the MIPI
+  fail:
+    msg: Need to define a valid mode for mipi_team_mode
+  when: >
+    mipi_bond_method == 'Team' and
+    mipi_team_mode is not undefined and
+    mipi_team_mode not in ('activebackup', 'lacp', 'loadbalance', 'broadcast', 'roundrobin')
+
+- name: Exit for incorrect mode when Team is the redundancy model for the SIPI
+  fail:
+    msg: Need to define a valid mode for sipi_team_mode
+  when: >
+    sipi_bond_method == 'Team' and
+    sipi_team_mode is not undefined and
+    sipi_team_mode not in ('activebackup', 'lacp', 'loadbalance', 'broadcast', 'roundrobin')
+
+- name: Exit for incorrect mode when Bond is the redundancy model for the MIPI
+  fail:
+    msg: Need to select a valid mode for mipi_bond_mode
+  when: >
+    mipi_bond_method == 'Bond' and
+    mipi_bond_mode is not undefined and
+    mipi_bond_mode not in ('balance-rr', 'active-backup', 'balance-xor', '802.3ad', 'balance-tlb', 'balance-alb')
+
+- name: Exit for incorrect mode when Bond is the redundancy model for the SIPI
+  fail:
+    msg: Need to select a valid mode for sipi_team_mode
+  when: >
+    sipi_bond_method == 'Bond' and
+    sipi_bond_mode is not undefined and
+    sipi_bond_mode not in ('balance-rr', 'active-backup', 'balance-xor', '802.3ad', 'balance-tlb', 'balance-alb')
+

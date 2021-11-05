@@ -1,0 +1,15 @@
+---
+# Host network Config
+# Allowed m/sipi_bond_method options: Team, Bond
+sipi_bond_method: Team
+mipi_bond_method: Team
+
+# Allowed m/sipi_team_mode options: activebackup, lacp, loadbalance, broadcast, roundrobin
+sipi_team_mode: activebackup
+mipi_team_mode: activebackup
+
+# Allowed m/sipi_bond_modes options: balance-rr, active-backup, balance-xor, 802.3ad, balance-tlb, balance-alb
+# 802.3ad is lacp
+sipi_bond_mode: active-backup
+mipi_bond_mode: active-backup
+

@@ -1,0 +1,11 @@
+{% if SIP_VLAN is undefined %}
+
+{{ SIP_NETWORK }}/{{ SIP_CIDR }} dev {{ SIPI }} src {{ SIP }} table {{ SIPI }}
+default via {{ SIP_GATEWAY }} dev {{ SIPI }} src {{ SIP }} table {{ SIPI }}
+
+{% else %}
+
+{{ SIP_NETWORK }}/{{ SIP_CIDR }} dev {{ SIPI }}.{{ SIP_VLAN }} src {{ SIP }} table {{ SIPI }}
+default via {{ SIP_GATEWAY }} dev {{ SIPI }}.{{ SIP_VLAN }} src {{ SIP }} table {{ SIPI }}
+
+{% endif %}

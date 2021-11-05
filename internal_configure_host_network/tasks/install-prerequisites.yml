@@ -1,0 +1,68 @@
+---
+- name: Ensure we fail if facts haven't been collected
+  fail:
+    msg: Cannot find facts for this node. Facts are required!
+  when: >
+    ansible_distribution_version is undefined or
+    (ansible_distribution_version is defined and not ansible_distribution_version)
+
+- name: Ensure we have the required RHEL/CentOS 7.x packages for network config
+  when: >
+    ansible_distribution_version is version("7.6", ">=") and
+    ansible_distribution_version is version("8.0", "<")
+  package:
+    name:
+      - python3
+      - python-pip
+      - python-setuptools
+      - NetworkManager-config-routing-rules
+      - NetworkManager-glib.x86_64
+#      - libnm-qt-devel.x86_64
+      - nm-connection-editor.x86_64
+      - libsemanage-python
+      - policycoreutils-python
+      - vim-enhanced
+    state: latest
+    update_cache: true
+
+# We're loading the platform specific python
+# (not the expected python distro packages)
+# This means the python executable is "hiding" in
+# /usr/libexec/
+- name: Ensure we have the required RHEL/CentOS 8.x packages for network config
+  when: ansible_distribution_version is version("8.0", ">=")
+  package:
+    name:
+      - platform-python
+      - platform-python-pip
+      - platform-python-setuptools
+      - NetworkManager-dispatcher-routing-rules
+      - NetworkManager-nmlib
+      - libsemanage-python
+      - policycoreutils-python
+      - python2
+      - python2-pip
+      - python2-setuptools
+    state: latest
+
+- name: Make sure required libraries are on ansible controller for checks
+  delegate_to: localhost
+  run_once: True
+  pip:
+    name:
+      - 'netaddr>=0.7.20'
+    state: present
+    #extra_args: "-i http://repoproxy-rtp.eng.netapp.com:8081/artifactory/api/pypi/python-package-index/simple
+    #  --extra-index-url http://sf-artifactory.solidfire.net/artifactory/api/pypi/valence-pypi/simple
+    #  --trusted-host sf-artifactory.solidfire.net
+    #  --trusted-host repoproxy-rtp.eng.netapp.com"
+
+    #- name: Make sure we have loaded libraries required to use Bourbon
+    #when: skip_bourbon is defined and not skip_bourbon
+    #pip:
+    #name:
+    #  - 'netapp-b2sdk'
+    #state: present
+    #extra_args: "--extra-index-url
+    #  http://sf-artifactory.solidfire.net/artifactory/api/pypi/valence-pypi/simple
+    #  --trusted-host sf-artifactory.solidfire.net"

@@ -1,0 +1,7 @@
+from {{ MIP }} table {{ MIPI }}
+
+{% if MVIP is defined %}
+
+from {{ MVIP }} table {{ MIPI }}
+
+{% endif %}

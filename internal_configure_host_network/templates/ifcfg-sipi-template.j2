@@ -1,0 +1,22 @@
+NAME={{ SIPI }}
+DEVICE={{ SIPI }}
+BOOTPROTO=none
+ONBOOT=yes
+
+{% if SIP_VLAN is undefined %}
+
+{% include 'sip-data-template.j2' %}
+
+{% endif %}
+
+{% if sipi_bond_method == 'Team' %}
+
+TEAM_CONFIG='{"runner": {"name": "{{ sipi_team_mode }}"}, "link_watch": {"name": "ethtool", "delay_up": 2500, "delay_down": 1000 }}'
+DEVICETYPE=Team
+
+{% elif sipi_bond_method == 'Bond' %}
+
+BONDING_OPTS="mode={{ sipi_bond_mode }} miimon=100 {{ 'lacp_rate=fast' if sipi_bond_mode == '802.3ad' }}"
+TYPE=Ethernet
+
+{% endif %}

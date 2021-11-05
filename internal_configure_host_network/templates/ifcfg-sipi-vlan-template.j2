@@ -1,0 +1,8 @@
+- NAME={{ SIPI }}.{{ SIP_VLAN }}
+DEVICE={{ SIPI }}.{{ SIP_VLAN }}
+BOOTPROTO=none
+ONBOOT=yes
+
+VLAN=yes
+
+{% include 'sip-data-template.j2' %}

@@ -1,0 +1,17 @@
+---
+# file: internal_configure_host_network/handlers/main.yml
+- name: "Reload config"
+  shell: "nmcli connection reload {{ SIPI }} && \
+  nmcli connection reload {{ MIPI }} && \
+  nmcli connection up {{ SIPI }} && \
+  nmcli connection up {{ MIPI }}"
+  become: true
+#  listen: "Reload config"
+
+- name: "Restart NetworkManager"
+  systemd:
+    name: NetworkManager
+    state: restarted
+    daemon_reload: yes
+  become: true
+#  listen: "Restart NetworkManager"

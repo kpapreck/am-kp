@@ -1,0 +1,22 @@
+NAME={{ MIPI }}
+DEVICE={{ MIPI }}
+BOOTPROTO=none
+ONBOOT=yes
+
+{% if MIP_VLAN is undefined %}
+
+{% include 'mip-data-template.j2' %}
+
+{% endif %}
+
+{% if mipi_bond_method == 'Team' %}
+
+TEAM_CONFIG='{"runner": {"name": "{{ mipi_team_mode }}"}, "link_watch": {"name": "ethtool", "delay_up": 2500, "delay_down": 1000 }}'
+DEVICETYPE=Team
+
+{% elif mipi_bond_method == 'Bond' %}
+
+BONDING_OPTS="mode={{ mipi_bond_mode }} miimon=100 {{ 'lacp_rate=fast' if mipi_bond_mode == '802.3ad' }}"
+TYPE=Ethernet
+
+{% endif %}

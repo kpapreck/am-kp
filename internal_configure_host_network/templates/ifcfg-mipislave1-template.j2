@@ -1,0 +1,16 @@
+NAME={{ MIPI_SLAVE1 }}
+DEVICE={{ MIPI_SLAVE1 }}
+ONBOOT=yes
+MTU={{ MANAGEMENT_MTU }}
+
+{% if mipi_bond_method == 'Team' %}
+
+TEAM_MASTER={{ MIPI }}
+DEVICETYPE=TeamPort
+
+{% elif mipi_bond_method == 'Bond' %}
+
+SLAVE=yes
+MASTER={{ MIPI }}
+
+{% endif %}
