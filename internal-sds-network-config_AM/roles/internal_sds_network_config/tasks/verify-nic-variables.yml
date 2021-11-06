@@ -1,0 +1,129 @@
+---
+- name: Fail if the NIC specified as SIPI_SLAVE0 is incorrect
+  fail:
+    msg: "The SIPI_SLAVE0 value for {{ ansible_hostname }} is incorrect"
+  when: >
+    SIPI_SLAVE0 is undefined or
+    (SIPI_SLAVE0 is defined and not SIPI_SLAVE0) or
+    (SPII_SLAVE0 is defined and
+    SIPI_SLAVE0 not in hostvars[inventory_hostname]['ansible_facts'].keys())
+
+- name: Fail if the NIC specified as SIPI_SLAVE1 is incorrect
+  fail:
+    msg: "The SIPI_SLAVE1 value for {{ ansible_hostname }} is incorrect"
+  when: >
+    SIPI_SLAVE1 is undefined or
+    (SIPI_SLAVE1 is defined and not SIPI_SLAVE1) or
+    (SPII_SLAVE1 is defined and
+    SIPI_SLAVE1 not in hostvars[inventory_hostname]['ansible_facts'].keys())
+
+- name: Fail if the NIC specified as MIPI_SLAVE0 is incorrect
+  fail:
+    msg: "The MIPI_SLAVE0 value for {{ ansible_hostname }} is incorrect"
+  when: >
+    MIPI_SLAVE0 is undefined or
+    (MIPI_SLAVE0 is defined and not MIPI_SLAVE0) or
+    (MIPI_SLAVE0 is defined and
+    MIPI_SLAVE0 not in hostvars[inventory_hostname]['ansible_facts'].keys())
+
+- name: Fail if the NIC specified as MIPI_SLAVE1 is incorrect
+  fail:
+    msg: "The MIPI_SLAVE1 value for {{ ansible_hostname }} is incorrect"
+  when: >
+    MIPI_SLAVE1 is undefined or
+    (MIPI_SLAVE1 is defined and not MIPI_SLAVE1) or
+    (MIPI_SLAVE1 is defined and
+    MIPI_SLAVE1 not in hostvars[inventory_hostname]['ansible_facts'].keys())
+
+- name: Ensure we have a default NIC name if the MIPI is undefined
+  set_fact:
+    MIPI: mgmt_t0
+  when: MIPI is undefined or (MIPI is defined and not MIPI)
+
+- name: Ensure we have a default NIC name if the SIPI is undefined
+  set_fact:
+    SIPI: strg_t1
+  when: SIPI is undefined or (SIPI is defined and not SIPI)
+
+- name: Ensure we have a valid MTU value for the MIPI
+  set_fact:
+    MANAGEMENT_MTU: 1500
+  when: >
+    MANAGEMENT_MTU is undefined or
+    (MANAGEMENT_MTU is defined and not MANAGEMENT_MTU)
+
+- name: Ensure we have a valid MTU value for the SIPI
+  set_fact:
+    STORAGE_MTU: 9000
+  when: >
+    STORAGE_MTU is undefined or
+    (STORAGE_MTU is defined and not STORAGE_MTU)
+
+- name: Ensure we fail if the network variables aren't configured
+  block:
+    - fail:
+        msg: The MIP variable is not optional. Please set a valid IP address
+      when: >
+        MIP is undefined or
+        (MIP is defined and not MIP) or
+        (MIP is defined and not MIP|ipaddr)
+
+    - fail:
+        msg: The IP Prefix value for the MIP is not defined (MIP_CIDR)
+      when: >
+        MIP_CIDR is undefined or
+        (MIP_CIDR is defined and not MIP_CIDR)
+
+    - fail:
+        msg: The gateway value for the MIP is not undefined/incorrect (MIP_GATEWAY)
+      when: >
+        MIP_GATEWAY is undefined or
+        (MIP_GATEWAY is defined and not MIP_GATEWAY) or
+        (MIP_GATEWAY is defined and not MIP_GATEWAY|ipaddr)
+
+    - fail:
+        msg: The network specified for the MIP is undefined/incorrect (MIP_NETWORK)
+      when: >
+        MIP_NETWORK is undefined or
+        (MIP_NETWORK is defined and not MIP_NETWORK) or
+        (MIP_NETWORK is defined and not (MIP_NETWORK|ipaddr))
+
+    - fail:
+        msg: The SIP variable is not optional. Please set a valid IP address
+      when: >
+        SIP is undefined or
+        (SIP is defined and not SIP) or
+        (SIP is defined and not SIP|ipaddr)
+
+    - fail:
+        msg: The IP Prefix value for the SIP is not defined (SIP_CIDR)
+      when: >
+        SIP_CIDR is undefined or
+        (SIP_CIDR is defined and not SIP_CIDR)
+
+    - fail:
+        msg: The gateway value for the SIP is undefined/incorrect (SIP_GATEWAY)
+      when: >
+        SIP_GATEWAY is undefined or
+        (SIP_GATEWAY is defined and not SIP_GATEWAY) or
+        (SIP_GATEWAY is defined and not SIP_GATEWAY|ipaddr)
+
+    - fail:
+        msg: The network specified for the SIP is undefined/incorrect (SIP_NETWORK)
+      when: >
+        SIP_NETWORK is undefined or
+        (SIP_NETWORK is defined and not SIP_NETWORK) or
+        (SIP_NETWORK is defined and not (SIP_NETWORK|ipaddr))
+
+- name: Ensure defined VLAN variables make sense
+  when: SIP_VLAN is defined or MIP_VLAN is defined
+  block:
+    - name: Ensure SIP_VLAN value makes sense
+      fail:
+        msg: The ID for the SIP VLAN is out of range
+      when: SIP_VLAN|int <= 0 or SIP_VLAN|int > 4094
+
+    - name: Ensure MIP_VLAN value makes sense
+      fail:
+        msg: The ID for the MIP VLAN is out of range
+      when: MIP_VLAN|int <= 0 or MIP_VLAN|int > 4094
